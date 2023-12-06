@@ -252,7 +252,6 @@ class FileAction:
         diagnostic_count = 0
         for server_name in self.diagnostics:
             diagnostic_count += len(self.diagnostics[server_name])
-
         if diagnostic_count == 0:
             message_emacs("No diagnostics found.")
         else:

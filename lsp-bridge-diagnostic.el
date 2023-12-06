@@ -314,7 +314,8 @@ You can set this value with `(2 3 4) if you just need render error diagnostic."
 (defun lsp-bridge-diagnostic--list (diagnostics)
   (let ((filepath acm-backend-lsp-filepath)
         (current-buffer (current-buffer))
-        (diagnostic-counter 0))
+        (diagnostic-counter 0)
+	(edebug))
     (with-temp-buffer
       (insert (concat "\n" "\033[95m" filepath "\033[0m" "\n"))
       (dolist (diagnostic diagnostics)

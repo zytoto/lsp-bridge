@@ -1,7 +1,7 @@
 {
   "completion": ["pyright"],
   "completion_item_resolve": ["pyright"],
-  "diagnostics": ["ruff"],
+  "diagnostics": ["ruff", "pyright"],
   "code_action": ["ruff"],
   "execute_command": ["pyright", "ruff"],
   "find_define": "pyright",

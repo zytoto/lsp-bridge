@@ -55,9 +55,9 @@ def threaded(func):
             args[0].thread_queue.append(thread)
     return wrapper
 
-REMOTE_FILE_SYNC_CHANNEL = 9999
-REMOTE_FILE_COMMAND_CHANNEL = 9998
-REMOTE_FILE_ELISP_CHANNEL = 9997
+REMOTE_FILE_SYNC_CHANNEL = 10099
+REMOTE_FILE_COMMAND_CHANNEL = 10098
+REMOTE_FILE_ELISP_CHANNEL = 10097
 
 class LspBridge:
     def __init__(self, args):
@@ -225,6 +225,8 @@ class LspBridge:
                     self.send_remote_file_message(server_host, {
                         "command": "open_file",
                         "server": server_host,
+                        "ssh_user": server_username,
+                        "ssh_port": ssh_port,
                         "path": server_path,
                         "jump_define_pos": epc_arg_transformer(jump_define_pos)
                     })
@@ -263,7 +265,9 @@ class LspBridge:
             else:
                 server = data["server"]
                 path = data["path"]
-                eval_in_emacs("lsp-bridge-open-remote-file--response", data["server"], path, string_to_base64(data["content"]), data["jump_define_pos"])
+                ssh_user = data.get("ssh_user", "root")
+                ssh_port = data.get("ssh_port", 22)
+                eval_in_emacs("lsp-bridge-open-remote-file--response", data["server"], ssh_user, ssh_port, path, string_to_base64(data["content"]), data["jump_define_pos"])
                 message_emacs(f"Open file {server}:{path}")
 
     @threaded
@@ -346,16 +350,22 @@ class LspBridge:
 
         if client_id in self.client_dict:
             client = self.client_dict[client_id]
-        else:
-            client = RemoteFileClient(
-                server_host,
-                self.host_names[server_host]["username"],
-                self.host_names[server_host]["ssh_port"],
-                server_port,
-                lambda message: self.receive_socket_message(message, server_port))
-            client.start()
+            if client.transport.is_active():
+                return client
+            else:
+                try:
+                    client.ssh.close()
+                except:
+                    pass
 
-            self.client_dict[client_id] = client
+        client = RemoteFileClient(
+            server_host,
+            self.host_names[server_host]["username"],
+            self.host_names[server_host]["ssh_port"],
+            server_port,
+            lambda message: self.receive_socket_message(message, server_port))
+        client.start()
+        self.client_dict[client_id] = client
 
         return client
 

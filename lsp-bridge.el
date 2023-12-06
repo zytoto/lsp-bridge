@@ -2295,6 +2295,8 @@ We need exclude `markdown-code-fontification:*' buffer in `lsp-bridge-monitor-be
 
 (defvar-local lsp-bridge-remote-file-flag nil)
 (defvar-local lsp-bridge-remote-file-host nil)
+(defvar-local lsp-bridge-remote-file-ssh-user nil)
+(defvar-local lsp-bridge-remote-file-ssh-port nil)
 (defvar-local lsp-bridge-remote-file-path nil)
 
 (defun lsp-bridge-open-or-create-file (filepath)
@@ -2319,7 +2321,7 @@ We need exclude `markdown-code-fontification:*' buffer in `lsp-bridge-monitor-be
                                   (split-string (buffer-string) "\n" t)))))
     (lsp-bridge-call-async "open_remote_file" path (list :line 0 :character 0))))
 
-(defun lsp-bridge-open-remote-file--response(server path content position)
+(defun lsp-bridge-open-remote-file--response(server user port path content position)
   (let ((buf-name (format "[LBR] %s" (file-name-nondirectory path))))
     (lsp-bridge-define--jump-record-postion)
 
@@ -2337,6 +2339,8 @@ We need exclude `markdown-code-fontification:*' buffer in `lsp-bridge-monitor-be
         (when mode
           (let ((lsp-bridge-remote-file-flag t)
                 (lsp-bridge-remote-file-host server)
+                (lsp-bridge-remote-file-ssh-user user)
+                (lsp-bridge-remote-file-ssh-port port)
                 (lsp-bridge-remote-file-path path))
             (funcall mode)))))
 

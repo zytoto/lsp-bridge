@@ -46,6 +46,24 @@ class RemoteFileClient(threading.Thread):
         self.transport = self.ssh.get_transport()
         self.chan = self.transport.open_channel("direct-tcpip", (self.ssh_host, self.server_port), ('0.0.0.0', 0))
 
+        # self.ssh = None
+        # self.transport = None
+        # self.chan = None
+        # self.lazy_connect()
+
+    def lazy_connect(self):
+        if self.transport is not None:
+            if self.transport.is_active():
+                return
+            elif self.ssh is not None:
+                try:
+                    self.ssh.close()
+                except:
+                    pass
+        self.ssh = self.connect_ssh()
+        self.transport = self.ssh.get_transport()
+        self.chan = self.transport.open_channel("direct-tcpip", (self.ssh_host, self.server_port), ('0.0.0.0', 0))
+
     def ssh_pub_key(self):
         # Read SSH public key.
         ssh_dir = os.path.expanduser('~/.ssh')
@@ -159,6 +177,8 @@ class RemoteFileServer:
         path = os.path.expanduser(data["path"])
         server = data["server"]
         jump_define_pos = data["jump_define_pos"]
+        ssh_user = data.get('ssh_user', 'root')
+        ssh_port = data.get('ssh_port', 22)
 
         if os.path.exists(path):
             with open(path) as f:
@@ -167,6 +187,8 @@ class RemoteFileServer:
                 response = {
                     "command": "open_file",
                     "server": server,
+                    "ssh_user": ssh_user,
+                    "ssh_port": ssh_port,
                     "path": path,
                     "jump_define_pos": jump_define_pos,
                     "content": content
@@ -177,6 +199,8 @@ class RemoteFileServer:
             response = {
                 "command": "open_file",
                 "server": server,
+                "ssh_user": ssh_user,
+                "ssh_port": ssh_port,
                 "path": path,
                 "jump_define_pos": jump_define_pos,
                 "content": "",
