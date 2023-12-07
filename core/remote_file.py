@@ -154,10 +154,16 @@ class RemoteFileServer:
     def handle_client(self, client_socket):
         client_file = client_socket.makefile('r')
         while True:
-            message = client_file.readline().strip()
-            if not message:
-                break
-            self.handle_message(message, client_socket)
+            try:
+                data = client_file.readline()
+                message = data.strip()
+                if not message:
+                    break
+                self.handle_message(message, client_socket)
+            except:
+                logger.error(traceback.format_exc())
+                if data:
+                    logger.error('data: {}'.format(data))
         client_socket.close()
 
     def handle_message(self, message, client_socket):

@@ -428,21 +428,27 @@ class LspBridge:
         client_file = self.remote_request_socket.makefile('r')
         while True:
             # Receive Python command request from local Emacs.
-            message = client_file.readline().strip()
-            if not message:
-                break
+            try:
+                data = client_file.readline()
+                message = data.strip()
+                if not message:
+                    break
 
-            message = parse_json_content(message)
+                message = parse_json_content(message)
 
-            if message["command"] == "lsp_request":
-                # Call LSP request.
-                self.event_queue.put({
-                    "name": "action_func",
-                    "content": ("_{}".format(message["method"]), [message["path"]] + message["args"])
-                })
-            elif message["command"] == "func_request":
-                # Call lsp-bridge normal function.
-                getattr(self, message["method"])(*message["args"])
+                if message["command"] == "lsp_request":
+                    # Call LSP request.
+                    self.event_queue.put({
+                        "name": "action_func",
+                        "content": ("_{}".format(message["method"]), [message["path"]] + message["args"])
+                    })
+                elif message["command"] == "func_request":
+                    # Call lsp-bridge normal function.
+                    getattr(self, message["method"])(*message["args"])
+            except:
+                logger.error(traceback.format_exc())
+                if data:
+                    logger.error('data: {}'.format(data))
 
     def event_dispatcher(self):
         try:
