@@ -2353,6 +2353,8 @@ We need exclude `markdown-code-fontification:*' buffer in `lsp-bridge-monitor-be
 
     (setq-local lsp-bridge-remote-file-flag t)
     (setq-local lsp-bridge-remote-file-host server)
+    (setq-local lsp-bridge-remote-file-ssh-user user)
+    (setq-local lsp-bridge-remote-file-ssh-port port)
     (setq-local lsp-bridge-remote-file-path path)
 
     ;; Always enable lsp-bridge for remote file.
