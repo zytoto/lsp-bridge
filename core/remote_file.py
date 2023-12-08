@@ -162,8 +162,6 @@ class RemoteFileServer:
                 self.handle_message(message, client_socket)
             except:
                 logger.error(traceback.format_exc())
-                if data:
-                    logger.error('data: {}'.format(data))
         client_socket.close()
 
     def handle_message(self, message, client_socket):

@@ -447,8 +447,6 @@ class LspBridge:
                     getattr(self, message["method"])(*message["args"])
             except:
                 logger.error(traceback.format_exc())
-                if data:
-                    logger.error('data: {}'.format(data))
 
     def event_dispatcher(self):
         try:

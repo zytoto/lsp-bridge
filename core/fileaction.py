@@ -276,7 +276,7 @@ class FileAction:
 
     def record_diagnostics(self, diagnostics, server_name):
         log_time("Record diagnostics from '{}' for file {}".format(server_name, os.path.basename(self.filepath)))
-
+        logger.debug("  Diagnostics [{}]:".format(server_name), diagnostics)
         # Record diagnostics data that push from LSP server.
         import functools
         self.diagnostics[server_name] = sorted(diagnostics, key=functools.cmp_to_key(self.sort_diagnostic))
@@ -284,6 +284,7 @@ class FileAction:
 
         # Try to push diagnostics to Emacs.
         if self.enable_push_diagnostics:
+            logger.debug("Pushing diagnostics from '{}' for file {}".format(server_name, os.path.basename(self.filepath)))
             push_diagnostic_ticker = self.diagnostics_ticker
             push_diagnostic_timer = threading.Timer(self.push_diagnostic_idle, lambda : self.try_push_diagnostics(push_diagnostic_ticker))
             push_diagnostic_timer.start()
