@@ -1,7 +1,7 @@
 {
   "completion": ["python-ms"],
   "completion_item_resolve": ["python-ms"],
-  "diagnostics": ["ruff"],
+  "diagnostics": ["pyright", "ruff"],
   "code_action": ["ruff"],
   "execute_command": ["python-ms", "ruff"],
   "find_define": "python-ms",

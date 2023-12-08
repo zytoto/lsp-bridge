@@ -1,7 +1,7 @@
 {
   "completion": ["pylsp"],
   "completion_item_resolve": ["pylsp"],
-  "diagnostics": ["ruff"],
+  "diagnostics": ["pyright", "ruff"],
   "code_action": ["ruff"],
   "execute_command": ["pylsp", "ruff"],
   "find_define": "pylsp",
