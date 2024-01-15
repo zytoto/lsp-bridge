@@ -208,8 +208,8 @@
 
 (defvar acm-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [remap next-line] #'acm-select-next)
-    (define-key map [remap previous-line] #'acm-select-prev)
+;;    (define-key map [remap next-line] #'acm-select-next)
+;;    (define-key map [remap previous-line] #'acm-select-prev)
     (define-key map [down] #'acm-select-next)
     (define-key map [up] #'acm-select-prev)
     (define-key map "\M-n" #'acm-select-next)
